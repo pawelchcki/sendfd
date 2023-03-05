@@ -101,7 +101,7 @@ fn send_with_fd(socket: RawFd, bs: &[u8], fds: &[RawFd]) -> io::Result<usize> {
         for (i, fd) in fds.iter().enumerate() {
             ptr::write_unaligned(cmsg_data.add(i), *fd);
         }
-        let count = libc::sendmsg(socket, &msghdr as *const _, 0);
+        let count = libc::sendmsg(socket, &msghdr as *const _, libc::MSG_NOSIGNAL);
         if count < 0 {
             let error = io::Error::last_os_error();
             alloc::dealloc(cmsg_buffer as *mut _, cmsg_layout);
